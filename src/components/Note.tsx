@@ -30,19 +30,21 @@ interface IMovement{
 const rotate = (props: IMovement) => keyframes`
     from {
         transform: translate(0, ${props.initialPosition}px);
-        ${(()=>{console.log(props); return "";})()}
+        opacity: 1;
     }
     to {
         transform: translate(0, ${props.totalDistance}px);
+        opacity: 1;
     }
 `;
 
 const StyledNote = styled.div<IMovement>`
-    width: 25px;
-    height: 25px;
+    width: 40px;
+    height: 40px;
     ${(props)=>'background-color: '+props.color};
     border-radius: 100%;
     display: flex;
+    opacity: 0;
     align-items: center;
     justify-content: center;
     position: absolute;

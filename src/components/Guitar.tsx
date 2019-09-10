@@ -3,39 +3,73 @@ import { Trilha } from './Trilha';
 import { INoteModel } from './Note';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { async } from 'q';
 
 
+//spawn moment is represented in tenth of a second
+let notes = {
+    green:[
+        {spawnMoment: 1, id: 1},
+        {spawnMoment: 5, id: 1},
+        {spawnMoment: 6, id: 2},
+        {spawnMoment: 7, id: 2},
+        {spawnMoment: 8, id: 3},
+        {spawnMoment: 9, id: 3},
+        {spawnMoment: 10, id: 4},
+        {spawnMoment: 10.5, id: 6},
+        {spawnMoment: 11, id: 7},
+        {spawnMoment: 11, id: 7},
+        {spawnMoment: 12, id: 8},
+        {spawnMoment: 230, id: 9}
+    ],
+    red:[
+        {spawnMoment: 10, id: 1},
+        {spawnMoment: 55, id: 1},
+        {spawnMoment: 60, id: 2},
+        {spawnMoment: 70, id: 2},
+        {spawnMoment: 80, id: 3},
+        {spawnMoment: 90, id: 3},
+        {spawnMoment: 100, id: 4},
+        {spawnMoment: 105, id: 6},
+        {spawnMoment: 110, id: 7},
+        {spawnMoment: 115, id: 7},
+        {spawnMoment: 120, id: 8},
+        {spawnMoment: 130, id: 9}
+    ],
+    yellow:[
+        {spawnMoment: 10, id: 1},
+        {spawnMoment: 55, id: 1},
+        {spawnMoment: 60, id: 2},
+        {spawnMoment: 70, id: 2},
+        {spawnMoment: 80, id: 3},
+        {spawnMoment: 90, id: 3},
+        {spawnMoment: 100, id: 4},
+        {spawnMoment: 105, id: 6},
+        {spawnMoment: 110, id: 7},
+        {spawnMoment: 115, id: 7},
+        {spawnMoment: 120, id: 8},
+        {spawnMoment: 130, id: 9}
+    ],
+    blue:[
+        {spawnMoment: 10, id: 1},
+        {spawnMoment: 55, id: 1},
+        {spawnMoment: 60, id: 2},
+        {spawnMoment: 70, id: 2},
+        {spawnMoment: 80, id: 3},
+        {spawnMoment: 90, id: 3},
+        {spawnMoment: 100, id: 4},
+        {spawnMoment: 105, id: 6},
+        {spawnMoment: 110, id: 7},
+        {spawnMoment: 115, id: 7},
+        {spawnMoment: 120, id: 8},
+        {spawnMoment: 130, id: 9}
+    ],
+    orange:[
 
-let notesGreen = [
-    {spawnMoment: 100, id: 1},
-    {spawnMoment: 550, id: 1},
-    {spawnMoment: 600, id: 2},
-    {spawnMoment: 700, id: 2},
-    {spawnMoment: 800, id: 3},
-    {spawnMoment: 900, id: 3},
-    {spawnMoment: 1000, id: 4},
-    {spawnMoment: 1050, id: 6},
-    {spawnMoment: 1100, id: 7},
-    {spawnMoment: 1150, id: 7},
-    {spawnMoment: 1200, id: 8},
-    {spawnMoment: 1300, id: 9}
-]
-
-let notesRed = [
-    {spawnMoment: 100, id: 1},
-    {spawnMoment: 550, id: 1},
-    {spawnMoment: 600, id: 2},
-    {spawnMoment: 700, id: 2},
-    {spawnMoment: 800, id: 3},
-    {spawnMoment: 900, id: 3},
-    {spawnMoment: 1000, id: 4},
-    {spawnMoment: 1050, id: 6},
-    {spawnMoment: 1100, id: 7},
-    {spawnMoment: 1150, id: 7},
-    {spawnMoment: 1200, id: 8},
-    {spawnMoment: 1300, id: 9}
-]
+        {spawnMoment: 11, id: 7},
+        {spawnMoment: 31, id: 8},
+        {spawnMoment: 32, id: 9}
+    ]
+}
 
 export function Guitar(){
     const [velocidade, setVelocidade] = useState(1);
@@ -49,93 +83,61 @@ export function Guitar(){
         justify-content: center;
         box-sizing: border-box;
     `
-    // DECAPRED
-    // const spawners:[[string,(id: INoteModel) => any]] = [["",()=>{}]];
-    // const addSpawner = (spawner: [string,(a:INoteModel) => any]) => (spawners.push(spawner));
-
     let updaters:{[key: string] : (note: INoteModel | null) => any} = {};
     const addUpdater = (updater: {[key: string] : (note: INoteModel | null) => any}) => (updaters = {...updater,...updaters});
 
-    
-    // DECAPRED
-    // // setTimeout(() => {
-    //     setTimeout(() => {
-    //         spawners.find(s => s[0] == 'green')![1](
-    //             {
-    //                 spawnMoment: Date.now(),
-    //                 color: "green"
-    //             }
-    //         );
-    //     }, 100)
-    //     // setTimeout(() => {
-    //     //     spawners.find(s => s[0] == 'green')![1](2);
-    //     // }, 1000)
-    // // }, 100);
-    // setInterval(() => {
-    //     spawners.find(s => s[0] == 'green')![1](
-    //     {
-    //         spawnMoment: Date.now(),
-    //         color: "green"
-    //     }
-    // )}, 900);
 
-    // const runTimeExec = async(updaters, start) => {
-    //     let lastTime = Date.now();
-    //     while(true){
-    //         // console.log(updaters)
-    //         // if(lastTime == Date.now()){continue;}
-    //         // lastTime = Date.now()
-    //         // if(lastTime-start > notesGreen[0].spawnMoment){
-    //         //     console.log(updaters)
-    //         //     // updaters["green"]({...notesGreen[0], spawnMoment: start+notesGreen[0].spawnMoment});
-    //         //     // notesGreen.shift()
-    //         // }//else{
-    //         //     updaters["green"](null);
-    //         // }
-    //     }
-    // }
     const start = Date.now();
-    // setTimeout(runTimeExec(updaters, start),1000);
     console.log(updaters)
     let runs = 0;
-
     setInterval(async () => {
-        // console.log(updaters);
-        console.log(runs);
         const now = Date.now();
-        if (notesGreen[0] && now - start > notesGreen[0].spawnMoment){
-            updaters["green"]({...notesGreen[0], spawnMoment: now});
-            notesGreen.shift()
-        }else{
-            updaters["green"](null);
-        }
-        runs++;
-    }, 1);
-    setInterval(async () => {
-        // console.log(updaters);
-        console.log(runs);
-        const now = Date.now();
-        if (notesRed[0] && now - start > notesRed[0].spawnMoment){
-            updaters["red"]({...notesRed[0], spawnMoment: now});
-            notesRed.shift()
-        }else{
-            updaters["red"](null);
-        }
-        runs++;
-    }, 1);
 
-    // setInterval(async () => {
-    //     // console.log(updaters);
-    //     if (runs1 % 10 == 0 ){
-    //         updaters["red"]({spawnMoment: Date.now(), id: runs});
-    //     }else{
-    //         updaters["red"](null);
-    //     }
-    //     runs1++;
-    //     // updaters();
-    // }, 10);
-
+        if (notes.green[0] && now - start > notes.green[0].spawnMoment*100){
+            updaters["green"]({...notes.green[0], spawnMoment: now});
+            notes.green.shift()
+        }
+    }, 1)
     
+
+    setInterval(async () => {
+        const now = Date.now();
+
+        if (notes.red[0] && now - start > notes.red[0].spawnMoment*100){
+            updaters["red"]({...notes.red[0], spawnMoment: now});
+            notes.red.shift()
+        }
+    }, 1);
+
+    setInterval(async () => {
+        const now = Date.now();
+
+        if (notes.yellow[0] && now - start > notes.yellow[0].spawnMoment*100){
+            updaters["yellow"]({...notes.yellow[0], spawnMoment: now});
+            notes.yellow.shift()
+        }
+    }, 1);
+
+    setInterval(async () => {
+        const now = Date.now();
+
+        if (notes.blue[0] && now - start > notes.blue[0].spawnMoment*100){
+            updaters["blue"]({...notes.blue[0], spawnMoment: now});
+            notes.blue.shift()
+        }
+    }, 10);
+
+
+    setInterval(async () => {
+        const now = Date.now();
+
+        if (notes.orange[0] && now - start > notes.orange[0].spawnMoment*100){
+            updaters["orange"]({...notes.orange[0], spawnMoment: now});
+            notes.orange.shift()
+        }        
+    }, 1);
+
+    console.log(`[${Date.now()}][Render]: Guitar Redering`, updaters)
     return (
         <StyledGuitar >
             <Trilha 

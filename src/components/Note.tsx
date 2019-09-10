@@ -25,6 +25,7 @@ interface IMovement{
     percentageRunned: number,
     totalLifeTime: number,
     remainLifeTime: number;
+    children?: any;
 }
 
 const rotate = (props: IMovement) => keyframes`
@@ -55,21 +56,27 @@ const StyledNote = styled.div<IMovement>`
         }}
         ${(props) => {return props.remainLifeTime;}}ms 
         linear;
-        `
+    & > div{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 100%;
+        background-color: white;
+        width: 25px;
+        height: 25px;
+    }
+`;
+
 export const Note = React.memo(function (props: INoteInfo){
     const now = Date.now();
     const totalLifeTime = props.heigth/props.velocity;
     const atualRunTime = (now-props.spawnMoment);
     const percentageRunned = atualRunTime/totalLifeTime;
 
-    // console.log('atualRunTime:', atualRunTime,percentageRunned)
-    // console.log('lifeTime:', totalLifeTime)
-    // console.log('initialPosition:', percentageRunned*props.heigth)
-    // console.log('tempo ainda falta:', (props.lifeTime-(props.now-props.spawnMoment)))
-    // console.log('timer:', (props.lifeTime-(props.now-props.spawnMoment))/props.velocity)
-            
+    console.log(`[${now}][Render]: Note`,props.color,props);
     return(<>
-        {totalLifeTime-(now-props.spawnMoment) > 0 && 
+        {
+            totalLifeTime-(now-props.spawnMoment) > 0 && 
             <StyledNote 
                 runedTime={atualRunTime}
                 percentageRunned={percentageRunned}
@@ -80,8 +87,11 @@ export const Note = React.memo(function (props: INoteInfo){
                 color={props.color}
                 velocity={props.velocity}
             >
-            {props.id}
+            <div>{props.id}</div>
+            
+            
             </StyledNote>
+            
         }
         </>
     );

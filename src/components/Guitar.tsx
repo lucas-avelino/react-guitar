@@ -1,25 +1,25 @@
 
 import { Trilha } from './Trilha';
 import { INoteModel } from './Note';
-import React, { useState } from 'react';
+import React, { useState, RefObject } from 'react';
 import styled from 'styled-components';
+import { ScoreBoard } from './ScoreBoard';
 
 
 //spawn moment is represented in tenth of a second
 let notes = {
     green:[
         {spawnMoment: 1, id: 1},
-        {spawnMoment: 5, id: 1},
+        {spawnMoment: 2, id: 1},
+        {spawnMoment: 4, id: 2},
         {spawnMoment: 6, id: 2},
-        {spawnMoment: 7, id: 2},
         {spawnMoment: 8, id: 3},
-        {spawnMoment: 9, id: 3},
-        {spawnMoment: 10, id: 4},
-        {spawnMoment: 10.5, id: 6},
-        {spawnMoment: 11, id: 7},
-        {spawnMoment: 11, id: 7},
-        {spawnMoment: 12, id: 8},
-        {spawnMoment: 230, id: 9}
+        {spawnMoment: 10, id: 3},
+        {spawnMoment: 12, id: 4},
+        {spawnMoment: 14, id: 7},
+        {spawnMoment: 16, id: 7},
+        {spawnMoment: 18, id: 8},
+        {spawnMoment: 20, id: 9}
     ],
     red:[
         {spawnMoment: 10, id: 1},
@@ -73,15 +73,22 @@ let notes = {
 
 export function Guitar(){
     const [velocidade, setVelocidade] = useState(1);
+    const [score, setScore] = useState(0);
     const StyledGuitar = styled.div`
         height: 100vh;
         width: 100vw;
         background-color: black;
         display: flex;
-        align-items: center;
+        align-items: baseline;
         padding: 50px;
         justify-content: center;
         box-sizing: border-box;
+        position: relative;
+        -webkit-perspective: 400px ;
+        perspective: 400px ;
+        padding: 50px;
+        padding-bottom: 400px;
+        /* margin: -50px 0 0 0; */
     `
     let updaters:{[key: string] : (note: INoteModel | null) => any} = {};
     const addUpdater = (updater: {[key: string] : (note: INoteModel | null) => any}) => (updaters = {...updater,...updaters});
@@ -125,7 +132,7 @@ export function Guitar(){
             updaters["blue"]({...notes.blue[0], spawnMoment: now});
             notes.blue.shift()
         }
-    }, 10);
+    }, 1);
 
 
     setInterval(async () => {
@@ -137,34 +144,54 @@ export function Guitar(){
         }        
     }, 1);
 
-    console.log(`[${Date.now()}][Render]: Guitar Redering`, updaters)
-    return (
-        <StyledGuitar >
-            <Trilha 
-                color={"green"}
-                addUpdater={addUpdater}
-                height={1000}
-            />
-             <Trilha 
-                color={"red"}
-                addUpdater={addUpdater}
-                height={1000}
-            />
-             <Trilha 
-                color={"yellow"}
-                addUpdater={addUpdater}
-                height={1000}
-            />
-             <Trilha 
-                color={"blue"}
-                addUpdater={addUpdater}
-                height={1000}
-            />
-             <Trilha 
-                color={"orange"}
-                addUpdater={addUpdater}
-                height={1000}
-            />
-        </StyledGuitar>
+    let correctNotes = 0;
+    const addCorrect = () => {
+        console.log((scoreBoard as unknown as ScoreBoard));
+        scoreBoard!.current!.setState({correctNotes: scoreBoard!.current!.state.correctNotes + 1});
+        // correctNotes = correctNotes++;
+    }
+    // console.log(`[${Date.now()}][Render]: Guitar Redering`, updaters)
+    const scoreBoard = React.createRef() as RefObject<ScoreBoard>;
+    return (<>
+            <StyledGuitar >
+            <ScoreBoard
+                ref={scoreBoard}/>
+                <Trilha 
+                    color={"green"}
+                    addUpdater={addUpdater}
+                    height={600}
+                    keyCode={65}
+                    addCorrect={addCorrect}
+                />
+                <Trilha 
+                    color={"red"}
+                    addUpdater={addUpdater}
+                    height={600}
+                    keyCode={83}
+                    addCorrect={addCorrect}
+                />
+                <Trilha 
+                    color={"yellow"}
+                    addUpdater={addUpdater}
+                    height={600}
+                    keyCode={71}
+                    addCorrect={addCorrect}
+                />
+                <Trilha 
+                    color={"blue"}
+                    addUpdater={addUpdater}
+                    height={600}
+                    keyCode={72}
+                    addCorrect={addCorrect}
+                />
+                <Trilha 
+                    color={"orange"}
+                    addUpdater={addUpdater}
+                    height={600}
+                    keyCode={74}
+                    addCorrect={addCorrect}
+                />
+            </StyledGuitar>
+        </>
     );
 }

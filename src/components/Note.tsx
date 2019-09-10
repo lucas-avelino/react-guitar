@@ -5,7 +5,7 @@ export interface INoteModel{
     spawnMoment: number,
     id: number,
     color?: string,
-    
+    totalLifeTime?: number,
 }
 
 interface INoteInfo{
@@ -41,7 +41,7 @@ const rotate = (props: IMovement) => keyframes`
 
 const StyledNote = styled.div<IMovement>`
     width: 40px;
-    height: 40px;
+    height: 25px;
     ${(props)=>'background-color: '+props.color};
     border-radius: 100%;
     display: flex;
@@ -49,7 +49,7 @@ const StyledNote = styled.div<IMovement>`
     align-items: center;
     justify-content: center;
     position: absolute;
-    left: 8px;
+    left: 5px;
     animation: 
         ${(props) => {
             return rotate(props);
@@ -63,17 +63,17 @@ const StyledNote = styled.div<IMovement>`
         border-radius: 100%;
         background-color: white;
         width: 25px;
-        height: 25px;
+        height: 15.625‬px;
     }
 `;
 
-export const Note = React.memo(function (props: INoteInfo){
+export const Note = React.memo(React.forwardRef(function (props: INoteInfo){
     const now = Date.now();
     const totalLifeTime = props.heigth/props.velocity;
     const atualRunTime = (now-props.spawnMoment);
     const percentageRunned = atualRunTime/totalLifeTime;
 
-    console.log(`[${now}][Render]: Note`,props.color,props);
+    // console.log(`[${now}][Render]: Note`,props.color,props);
     return(<>
         {
             totalLifeTime-(now-props.spawnMoment) > 0 && 
@@ -95,4 +95,4 @@ export const Note = React.memo(function (props: INoteInfo){
         }
         </>
     );
-});
+}));

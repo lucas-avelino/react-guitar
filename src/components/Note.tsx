@@ -6,6 +6,7 @@ export interface INoteModel{
     id: number,
     color?: string,
     totalLifeTime?: number,
+    end?: number,
 }
 
 interface INoteInfo{
@@ -14,6 +15,7 @@ interface INoteInfo{
     velocity: number,
     heigth: number,
     id: number,
+    end?: number,
 }
 
 interface IMovement{
@@ -24,8 +26,9 @@ interface IMovement{
     runedTime: number,
     percentageRunned: number,
     totalLifeTime: number,
-    remainLifeTime: number;
-    children?: any;
+    remainLifeTime: number,
+    children?: any,
+    end?: number
 }
 
 const rotate = (props: IMovement) => keyframes`
@@ -56,7 +59,7 @@ const StyledNote = styled.div<IMovement>`
         }}
         ${(props) => {return props.remainLifeTime;}}ms 
         linear;
-    & > div{
+    & > .disk{
         display: flex;
         align-items: center;
         justify-content: center;
@@ -65,15 +68,26 @@ const StyledNote = styled.div<IMovement>`
         width: 25px;
         height: 15.625‬px;
     }
+    & > .extend{
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        ${(props)=>'background-color: '+props.color};
+        width: 25px;
+        height: ${(props)=>props.end!*20}px;
+        bottom: 22px;
+    }
 `;
 
 export const Note = React.memo(React.forwardRef(function (props: INoteInfo){
     const now = Date.now();
-    const totalLifeTime = props.heigth/props.velocity;
+    const sizeMod = (props.end||0) * 20;
+    const totalLifeTime = (props.heigth+sizeMod)/props.velocity;
     const atualRunTime = (now-props.spawnMoment);
     const percentageRunned = atualRunTime/totalLifeTime;
 
-    // console.log(`[${now}][Render]: Note`,props.color,props);
+    console.log(`[${now}][Render]: Note`,props.color,props,sizeMod);
     return(<>
         {
             totalLifeTime-(now-props.spawnMoment) > 0 && 
@@ -81,14 +95,17 @@ export const Note = React.memo(React.forwardRef(function (props: INoteInfo){
                 runedTime={atualRunTime}
                 percentageRunned={percentageRunned}
                 initialPosition={percentageRunned*props.heigth}
-                totalDistance={props.heigth}
+                totalDistance={props.heigth+sizeMod}
                 totalLifeTime={totalLifeTime}
                 remainLifeTime={totalLifeTime-(now-props.spawnMoment)}
                 color={props.color}
                 velocity={props.velocity}
+                end={props.end}
             >
-            <div>{props.id}</div>
-            
+            {props.end &&
+                <div className="extend"></div>
+            }
+            <div className="disk"> {props.id} </div>
             
             </StyledNote>
             

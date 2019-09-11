@@ -9,9 +9,9 @@ import { ScoreBoard } from './ScoreBoard';
 //spawn moment is represented in tenth of a second
 let notes = {
     green:[
-        {spawnMoment: 1, id: 1},
-        {spawnMoment: 2, id: 1},
-        {spawnMoment: 4, id: 2},
+        {spawnMoment: 1,end: 5, id: 1},
+        // {spawnMoment: , id: 1},
+        // {spawnMoment: 4, id: 2},
         {spawnMoment: 6, id: 2},
         {spawnMoment: 8, id: 3},
         {spawnMoment: 10, id: 3},
@@ -95,13 +95,13 @@ export function Guitar(){
 
 
     const start = Date.now();
-    console.log(updaters)
+    // console.log(updaters)
     let runs = 0;
     setInterval(async () => {
         const now = Date.now();
 
         if (notes.green[0] && now - start > notes.green[0].spawnMoment*100){
-            updaters["green"]({...notes.green[0], spawnMoment: now});
+            updaters["green"]({...notes.green[0], spawnMoment: now, end: notes.green[0].end? notes.green[0].end-notes.green[0].spawnMoment: notes.green[0].end});
             notes.green.shift()
         }
     }, 1)
@@ -146,7 +146,7 @@ export function Guitar(){
 
     let correctNotes = 0;
     const addCorrect = () => {
-        console.log((scoreBoard as unknown as ScoreBoard));
+        // console.log((scoreBoard as unknown as ScoreBoard));
         scoreBoard!.current!.setState({correctNotes: scoreBoard!.current!.state.correctNotes + 1});
         // correctNotes = correctNotes++;
     }

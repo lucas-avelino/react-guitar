@@ -82,7 +82,7 @@ export const Trigger =  function (props: ITrigger){
     }, [])
 
 
-    console.log(`[${Date.now()}][Render]: Trigger Redering`,props)
+    // console.log(`[${Date.now()}][Render]: Trigger Redering`,props)
     return(
         <StyledTrigger 
             {...props} 

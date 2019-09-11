@@ -25,6 +25,12 @@ const StyledTrilha = styled.div<{
     -webkit-transform: rotateX(35deg); /* Safari 3-8  */
     transform-style: preserve-3d;
     transform: rotateX(35deg);
+    & > .notes{
+        overflow: hidden;
+        width: 100%;
+        height: calc(100% + 10px);
+        position: relative;
+    }
 `
 export const Trilha =  React.memo(function (props: ITrilha){
 
@@ -54,17 +60,19 @@ export const Trilha =  React.memo(function (props: ITrilha){
         <StyledTrilha
             {...props}
             
-        >
-            {notas.map(n => 
-                <Note
-                    heigth={props.height}
-                    {...n}
-                    velocity={0.25}
-                    color={props.color}
-                    // ref={(ref)=>{setRef({...refs, ...ref})}}
-                />
-            )}
-            
+        >   
+            <div className="notes">
+                {notas.map(n => 
+                    <Note
+                        heigth={props.height}
+                        {...n}
+                        velocity={0.25}
+                        color={props.color}
+                        end={n.end}
+                        // ref={(ref)=>{setRef({...refs, ...ref})}}
+                    />
+                )}
+            </div>
             <Trigger
                 color={props.color}
                 keyCode={props.keyCode}

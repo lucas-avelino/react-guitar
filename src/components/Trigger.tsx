@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Note, INoteModel } from './Note';
 import Fire from '../img/fire.gif';
+import { CONFIG } from './Guitar';
 
 interface ITrigger{
     color: string;
@@ -42,35 +43,38 @@ const StyledTrigger = styled.div<{
         animation: ${hide} 500ms ease-out;
     }
 `
-let notes: Array<INoteModel | null> = [];
 
+let notes: Array<INoteModel | null> = [];
 export const Trigger =  function (props: ITrigger){
-    notes = notes != []? notes = props.notas: notes
+    notes = notes != []? notes = new Array(...props.notas as Array<INoteModel | null>): notes
     const [pressed , setPressed] = useState(false);
     const [pressedCorrect , setPressedCorrect] = useState(false);
+    const commonTotalLifeTime = CONFIG.trilhaSize/CONFIG.noteVelocity;
+
 
     const onKeyDown = function (e:any) {
-        console.log(e.keyCode )
         if(e.keyCode == props.keyCode && !pressed){
-            
             setPressed(true);
             const filtered = notes.filter(n=>
                 n
-                && n.spawnMoment+n.totalLifeTime!<Date.now()+200 
-                && n.spawnMoment+n.totalLifeTime!>Date.now()-200
+                && n.spawnMoment+commonTotalLifeTime<Date.now() + CONFIG.accuracy
+                && n.spawnMoment+commonTotalLifeTime>Date.now() - CONFIG.accuracy
             );
-            console.log("onKeyDown",Date.now(),filtered)
+            // console.log("onKeyDown",Date.now(),filtered)
             if(filtered.length > 0 ){
-                console.log(`[${Date.now()}][Log]:`,filtered)
+
+                console.log(`[${Date.now()}][Log][${props.color}]:`,filtered)
                 notes[notes.indexOf(filtered[0])] = null;
                 setPressedCorrect(true);
                 props.addCorrect();
             }
+        }else if(pressed){
+           
         }
     }
 
     const onKeyRelease = function (e:any) {
-        console.log(e.keyCode )
+        // console.log(e.keyCode )
         if(e.keyCode == props.keyCode){
             setPressedCorrect(false);
             setPressed(false);
@@ -82,7 +86,7 @@ export const Trigger =  function (props: ITrigger){
     }, [])
 
 
-    // console.log(`[${Date.now()}][Render]: Trigger Redering`,props)
+    // console.log(`[${Date.now()}][Render]: Trigger Redering`,props,pressed)
     return(
         <StyledTrigger 
             {...props} 

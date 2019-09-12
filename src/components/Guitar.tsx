@@ -5,16 +5,15 @@ import React, { useState, RefObject } from 'react';
 import styled from 'styled-components';
 import { ScoreBoard } from './ScoreBoard';
 
-
 //spawn moment is represented in tenth of a second
 let notes = {
     green:[
-        {spawnMoment: 1,end: 5, id: 1},
+        {spawnMoment: 1,end: 10 , id: 1},
         // {spawnMoment: , id: 1},
         // {spawnMoment: 4, id: 2},
-        {spawnMoment: 6, id: 2},
-        {spawnMoment: 8, id: 3},
-        {spawnMoment: 10, id: 3},
+        // {spawnMoment: 6, id: 2},
+        // {spawnMoment: 8, id: 3},
+        // {spawnMoment: 10, id: 3},
         {spawnMoment: 12, id: 4},
         {spawnMoment: 14, id: 7},
         {spawnMoment: 16, id: 7},
@@ -70,6 +69,39 @@ let notes = {
         {spawnMoment: 32, id: 9}
     ]
 }
+interface Trilhas{
+    color: string,
+    keyCode: number
+}
+
+export const CONFIG = {
+    trilhas: [
+        {
+            color:"green",
+            keyCode:65
+        },
+        {
+            color:"red",
+            keyCode:83
+        },
+        {
+            color:"yellow",
+            keyCode:71
+        },
+        {
+            color:"blue",
+            keyCode:72
+        },
+        {
+            color:"orange",
+            keyCode:74
+        },
+    ] as Array<Trilhas>,
+    noteVelocity: 0.25,
+    trilhaSize: 600,
+    accuracy: 150,
+    timeNPS: 100,
+}
 
 export function Guitar(){
     const [velocidade, setVelocidade] = useState(1);
@@ -88,109 +120,45 @@ export function Guitar(){
         perspective: 400px ;
         padding: 50px;
         padding-bottom: 400px;
-        /* margin: -50px 0 0 0; */
     `
     let updaters:{[key: string] : (note: INoteModel | null) => any} = {};
     const addUpdater = (updater: {[key: string] : (note: INoteModel | null) => any}) => (updaters = {...updater,...updaters});
 
 
     const start = Date.now();
-    // console.log(updaters)
-    let runs = 0;
-    setInterval(async () => {
-        const now = Date.now();
+    for (const i in CONFIG.trilhas) {
+        setInterval(async () => {
+            const now = Date.now();
+            const trilha = CONFIG.trilhas[i].color;
+            if (notes[trilha][0] && now - start > notes[trilha][0].spawnMoment * CONFIG.timeNPS){
+                updaters[trilha]({
+                    ...notes[trilha][0],
+                    spawnMoment: now,
+                    end: notes[trilha][0].end? notes[trilha][0].end - notes[trilha][0].spawnMoment: notes[trilha][0].end
+                });
+                notes[trilha].shift()
+            }
+        }, 10)
+    }
 
-        if (notes.green[0] && now - start > notes.green[0].spawnMoment*100){
-            updaters["green"]({...notes.green[0], spawnMoment: now, end: notes.green[0].end? notes.green[0].end-notes.green[0].spawnMoment: notes.green[0].end});
-            notes.green.shift()
-        }
-    }, 1)
-    
-
-    setInterval(async () => {
-        const now = Date.now();
-
-        if (notes.red[0] && now - start > notes.red[0].spawnMoment*100){
-            updaters["red"]({...notes.red[0], spawnMoment: now});
-            notes.red.shift()
-        }
-    }, 1);
-
-    setInterval(async () => {
-        const now = Date.now();
-
-        if (notes.yellow[0] && now - start > notes.yellow[0].spawnMoment*100){
-            updaters["yellow"]({...notes.yellow[0], spawnMoment: now});
-            notes.yellow.shift()
-        }
-    }, 1);
-
-    setInterval(async () => {
-        const now = Date.now();
-
-        if (notes.blue[0] && now - start > notes.blue[0].spawnMoment*100){
-            updaters["blue"]({...notes.blue[0], spawnMoment: now});
-            notes.blue.shift()
-        }
-    }, 1);
-
-
-    setInterval(async () => {
-        const now = Date.now();
-
-        if (notes.orange[0] && now - start > notes.orange[0].spawnMoment*100){
-            updaters["orange"]({...notes.orange[0], spawnMoment: now});
-            notes.orange.shift()
-        }        
-    }, 1);
-
-    let correctNotes = 0;
     const addCorrect = () => {
-        // console.log((scoreBoard as unknown as ScoreBoard));
-        scoreBoard!.current!.setState({correctNotes: scoreBoard!.current!.state.correctNotes + 1});
-        // correctNotes = correctNotes++;
+        if (scoreBoard && scoreBoard.current)
+            scoreBoard!.current!.setState({correctNotes: scoreBoard!.current!.state.correctNotes + 1});
     }
     // console.log(`[${Date.now()}][Render]: Guitar Redering`, updaters)
     const scoreBoard = React.createRef() as RefObject<ScoreBoard>;
     return (<>
             <StyledGuitar >
-            <ScoreBoard
-                ref={scoreBoard}/>
-                <Trilha 
-                    color={"green"}
-                    addUpdater={addUpdater}
-                    height={600}
-                    keyCode={65}
-                    addCorrect={addCorrect}
-                />
-                <Trilha 
-                    color={"red"}
-                    addUpdater={addUpdater}
-                    height={600}
-                    keyCode={83}
-                    addCorrect={addCorrect}
-                />
-                <Trilha 
-                    color={"yellow"}
-                    addUpdater={addUpdater}
-                    height={600}
-                    keyCode={71}
-                    addCorrect={addCorrect}
-                />
-                <Trilha 
-                    color={"blue"}
-                    addUpdater={addUpdater}
-                    height={600}
-                    keyCode={72}
-                    addCorrect={addCorrect}
-                />
-                <Trilha 
-                    color={"orange"}
-                    addUpdater={addUpdater}
-                    height={600}
-                    keyCode={74}
-                    addCorrect={addCorrect}
-                />
+                <ScoreBoard ref={scoreBoard}/>
+                {CONFIG.trilhas.map(n=>
+                    <Trilha 
+                        color={n.color}
+                        keyCode={n.keyCode}
+                        height={CONFIG.trilhaSize}
+                        addUpdater={addUpdater}
+                        addCorrect={addCorrect}
+                    />
+                )} 
             </StyledGuitar>
         </>
     );

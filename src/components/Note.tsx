@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { CONFIG } from './Guitar';
 
 export interface INoteModel{
     spawnMoment: number,
@@ -7,15 +8,15 @@ export interface INoteModel{
     color?: string,
     totalLifeTime?: number,
     end?: number,
+    noteTrigger?: number
 }
 
 interface INoteInfo{
     spawnMoment: number,
     color: string,
-    velocity: number,
-    heigth: number,
     id: number,
     end?: number,
+    totalLifeTime?: number,
 }
 
 interface IMovement{
@@ -83,23 +84,23 @@ const StyledNote = styled.div<IMovement>`
 export const Note = React.memo(React.forwardRef(function (props: INoteInfo){
     const now = Date.now();
     const sizeMod = (props.end||0) * 20;
-    const totalLifeTime = (props.heigth+sizeMod)/props.velocity;
+    const totalLifeTime = (CONFIG.trilhaSize)/CONFIG.noteVelocity;
     const atualRunTime = (now-props.spawnMoment);
-    const percentageRunned = atualRunTime/totalLifeTime;
+    const percentageRunned = atualRunTime/(props.totalLifeTime||totalLifeTime);
 
-    console.log(`[${now}][Render]: Note`,props.color,props,sizeMod);
+    // console.log(`[${now}][Render]: Note`,props.color,props);
     return(<>
         {
-            totalLifeTime-(now-props.spawnMoment) > 0 && 
+            (props.totalLifeTime||totalLifeTime)-(now-props.spawnMoment) > 0 && 
             <StyledNote 
                 runedTime={atualRunTime}
                 percentageRunned={percentageRunned}
-                initialPosition={percentageRunned*props.heigth}
-                totalDistance={props.heigth+sizeMod}
-                totalLifeTime={totalLifeTime}
-                remainLifeTime={totalLifeTime-(now-props.spawnMoment)}
+                initialPosition={percentageRunned*CONFIG.trilhaSize}
+                totalDistance={CONFIG.trilhaSize+sizeMod}
+                totalLifeTime={props.totalLifeTime || totalLifeTime}
+                remainLifeTime={(props.totalLifeTime || totalLifeTime)-(now-props.spawnMoment)}
                 color={props.color}
-                velocity={props.velocity}
+                velocity={CONFIG.noteVelocity}
                 end={props.end}
             >
             {props.end &&

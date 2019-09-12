@@ -2,6 +2,8 @@ import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { Note, INoteModel } from './Note';
 import { Trigger } from './Trigger';
+import { CONFIG } from './Guitar';
+
 
 interface ITrilha{
     color: string;
@@ -42,7 +44,7 @@ export const Trilha =  React.memo(function (props: ITrilha){
     const updater = async (nota: INoteModel) => {
         const filtered = notes.filter(n=>n && ((4*props.height)-(Date.now()-n.spawnMoment)) > 0);
         if(nota){
-            notes.push({...nota, totalLifeTime: (props.height/0.25)});
+            notes.push({...nota, totalLifeTime: (CONFIG.trilhaSize+(nota.end||0)*20)/CONFIG.noteVelocity});
             setNotas(notes);
             forceUpdate();
         }
@@ -64,11 +66,10 @@ export const Trilha =  React.memo(function (props: ITrilha){
             <div className="notes">
                 {notas.map(n => 
                     <Note
-                        heigth={props.height}
                         {...n}
-                        velocity={0.25}
                         color={props.color}
                         end={n.end}
+                        totalLifeTime={n.totalLifeTime}
                         // ref={(ref)=>{setRef({...refs, ...ref})}}
                     />
                 )}

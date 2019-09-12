@@ -36,7 +36,7 @@ const StyledTrilha = styled.div<{
 `
 export const Trilha =  React.memo(function (props: ITrilha){
 
-    const [notas , setNotas] = useState([] as Array<INoteModel>);
+    const [notas , setNotas] = useState([] as Array<INoteModel | undefined>);
     // const [refs , setRef] = useState({[key]:});
     const [, updateState] = React.useState();
     const forceUpdate = useCallback(() => updateState({}), []);
@@ -44,7 +44,11 @@ export const Trilha =  React.memo(function (props: ITrilha){
     const updater = async (nota: INoteModel) => {
         const filtered = notes.filter(n=>n && ((4*props.height)-(Date.now()-n.spawnMoment)) > 0);
         if(nota){
-            notes.push({...nota, totalLifeTime: (CONFIG.trilhaSize+(nota.end||0)*20)/CONFIG.noteVelocity});
+            notes.push({
+                ...nota, 
+                totalLifeTime: (CONFIG.trilhaSize+(nota.end||0)*20)/CONFIG.noteVelocity,
+                color: props.color
+            });
             setNotas(notes);
             forceUpdate();
         }
@@ -57,6 +61,10 @@ export const Trilha =  React.memo(function (props: ITrilha){
     
     // console.log(`[${Date.now()}][Render]: Trilha Redering`,props.color, notes)
 
+    useEffect(()=>{
+        
+
+    },[]);
 
     return(<>
         <StyledTrilha
@@ -64,7 +72,7 @@ export const Trilha =  React.memo(function (props: ITrilha){
             
         >   
             <div className="notes">
-                {notas.map(n => 
+                {notas.map(n => n &&
                     <Note
                         {...n}
                         color={props.color}

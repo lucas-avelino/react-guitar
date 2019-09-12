@@ -7,7 +7,7 @@ import { CONFIG } from './Guitar';
 interface ITrigger{
     color: string;
     keyCode: number;
-    notas: Array<INoteModel | null>;
+    notas: Array<INoteModel>;
     addCorrect: () => any; 
 }
 
@@ -44,18 +44,19 @@ const StyledTrigger = styled.div<{
     }
 `
 
-let notes: Array<INoteModel | null> = [];
 export const Trigger =  function (props: ITrigger){
-    notes = notes != []? notes = new Array(...props.notas as Array<INoteModel | null>): notes
+    let notes: Array<INoteModel | undefined> = new Array(...props.notas as Array<INoteModel | undefined>);
     const [pressed , setPressed] = useState(false);
     const [pressedCorrect , setPressedCorrect] = useState(false);
     const commonTotalLifeTime = CONFIG.trilhaSize/CONFIG.noteVelocity;
 
-
-    const onKeyDown = function (e:any) {
+    console.log(`[${Date.now()}][Log][OnRender][${props.color}]:`,"props.notas",props.notas)
+    const onKeyDown =  (e:any) => {
+        console.log(`[${Date.now()}][Log][${props.color}]:`,"props.notas",props.notas)
+        console.log(`[${Date.now()}][Log][${props.color}]:`,"notes",notes)
         if(e.keyCode == props.keyCode && !pressed){
             setPressed(true);
-            const filtered = notes.filter(n=>
+            const filtered = props.notas.filter(n=>
                 n
                 && n.spawnMoment+commonTotalLifeTime<Date.now() + CONFIG.accuracy
                 && n.spawnMoment+commonTotalLifeTime>Date.now() - CONFIG.accuracy
@@ -64,14 +65,14 @@ export const Trigger =  function (props: ITrigger){
             if(filtered.length > 0 ){
 
                 console.log(`[${Date.now()}][Log][${props.color}]:`,filtered)
-                notes[notes.indexOf(filtered[0])] = null;
+                props.notas[props.notas.indexOf(filtered[0])] = undefined;
                 setPressedCorrect(true);
                 props.addCorrect();
             }
         }else if(pressed){
-           
+           console.log("Ispressed")
         }
-    }
+    };
 
     const onKeyRelease = function (e:any) {
         // console.log(e.keyCode )
@@ -83,7 +84,7 @@ export const Trigger =  function (props: ITrigger){
     useEffect(()=>{
         document.addEventListener("keydown", onKeyDown);
         document.addEventListener("keyup", onKeyRelease);
-    }, [])
+    }, [props])
 
 
     // console.log(`[${Date.now()}][Render]: Trigger Redering`,props,pressed)

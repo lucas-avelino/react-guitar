@@ -8,7 +8,7 @@ import { ScoreBoard } from './ScoreBoard';
 //spawn moment is represented in tenth of a second
 let notes = {
     green:[
-        {spawnMoment: 1,end: 10 , id: 1},
+        {spawnMoment: 1,end: 11 , id: 1},
         // {spawnMoment: , id: 1},
         // {spawnMoment: 4, id: 2},
         // {spawnMoment: 6, id: 2},
@@ -101,6 +101,7 @@ export const CONFIG = {
     trilhaSize: 600,
     accuracy: 150,
     timeNPS: 100,
+    sizeOfTime: 25,
 }
 
 export function Guitar(){

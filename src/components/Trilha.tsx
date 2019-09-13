@@ -36,7 +36,7 @@ const StyledTrilha = styled.div<{
 `
 export const Trilha =  React.memo(function (props: ITrilha){
 
-    const [notas , setNotas] = useState([] as Array<INoteModel | undefined>);
+    const [notas , setNotas] = useState([] as Array<INoteModel>);
     // const [refs , setRef] = useState({[key]:});
     const [, updateState] = React.useState();
     const forceUpdate = useCallback(() => updateState({}), []);
@@ -46,7 +46,7 @@ export const Trilha =  React.memo(function (props: ITrilha){
         if(nota){
             notes.push({
                 ...nota, 
-                totalLifeTime: (CONFIG.trilhaSize+(nota.end||0)*20)/CONFIG.noteVelocity,
+                totalLifeTime: (CONFIG.trilhaSize+(nota.end||0)*CONFIG.sizeOfTime)/CONFIG.noteVelocity,
                 color: props.color
             });
             setNotas(notes);

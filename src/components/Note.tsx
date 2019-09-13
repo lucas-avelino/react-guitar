@@ -76,14 +76,14 @@ const StyledNote = styled.div<IMovement>`
         justify-content: center;
         ${(props)=>'background-color: '+props.color};
         width: 25px;
-        height: ${(props)=>props.end!*20}px;
+        height: ${(props)=>props.end!*CONFIG.sizeOfTime - 15}px;
         bottom: 22px;
     }
 `;
 
 export const Note = React.memo(React.forwardRef(function (props: INoteInfo){
     const now = Date.now();
-    const sizeMod = (props.end||0) * 20;
+    const sizeMod = (props.end||0) * CONFIG.sizeOfTime;
     const totalLifeTime = (CONFIG.trilhaSize)/CONFIG.noteVelocity;
     const atualRunTime = (now-props.spawnMoment);
     const percentageRunned = atualRunTime/(props.totalLifeTime||totalLifeTime);

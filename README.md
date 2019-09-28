@@ -1,5 +1,6 @@
 ## React Guitar
 Game developed in [ReactJS](https://github.com/facebook/create-react-app) with [TypeScript](https://github.com/microsoft/TypeScript)
+The game consists in a guitar simulator like Guitar Flash, the main purpose of this project is study syncronization of setTimeout and seiInterval in React apps. 
 
 Versions: `Typescript 3.6.2` and `ReactJs ^16.9.0`
 

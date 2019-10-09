@@ -98,7 +98,7 @@ export const CONFIG = {
         },
     ] as Array<Trilhas>,
     noteVelocity: 0.25,
-    trilhaSize: 600,
+    trilhaSize: window.screen.height*.65,
     accuracy: 150,
     timeNPS: 100,
     sizeOfTime: 25,
@@ -120,7 +120,7 @@ export function Guitar(){
         -webkit-perspective: 400px ;
         perspective: 400px ;
         padding: 50px;
-        padding-bottom: 400px;
+        padding-bottom: 200px;
     `
     let updaters:{[key: string] : (note: INoteModel | null) => any} = {};
     const addUpdater = (updater: {[key: string] : (note: INoteModel | null) => any}) => (updaters = {...updater,...updaters});

@@ -38,17 +38,19 @@ const StyledTrigger = styled.div<{
         width: 100px;
         top: -60px;
         left: -25px;
-        display: ${(props) => {if(props.pressedCorrect) return "block"; else return "none";}};
+        opacity: 1;
+        // -webkit-trasition: opacity 400ms ;
+        // trasition: opacity 400ms ;
+    }
+    // todo: add animation on fire 
+    & > .notPressed {
         opacity: 0;
-        -webkit-animation: ${hide} 500ms ease-out;
-        animation: ${hide} 500ms ease-out;
     }
 `
 
-export const Trigger = React.memo((props: ITrigger) => {
+export const Trigger = (props: ITrigger) => {
     const [pressedState , setPressedState] = useState(false);
     const [pressedCorrectState , setPressedCorrectState] = useState(false);
-    // let notes: Array<INoteModel> = new Array(...props.notas as Array<INoteModel>);
     let pressed = false;
     let pressedCorrect = false;
     let lastNoteFound: undefined | INoteModel;
@@ -56,9 +58,6 @@ export const Trigger = React.memo((props: ITrigger) => {
 
     // if(props.color == "green") console.log(`[${Date.now()}][Log][OnRender][${props.color}]:`,"props.notas",props.notas)
     const onKeyDown =  (e:any) => {
-        if(props.color == "green") console.log(`[${Date.now()}][Log][${props.color}]:`,"props.notas",props.notas)
-        // if(props.color == "green") console.log(`[${Date.now()}][Log][${props.color}]:`,"notes",notes)
-        // console.log(pressed, pressedCorrect)
         if(e.keyCode == props.keyCode && !pressed){
             setPressedState(true);
             pressed = true;
@@ -75,15 +74,20 @@ export const Trigger = React.memo((props: ITrigger) => {
                 delete props.notas[props.notas.indexOf(filtered[0])];
                 setPressedCorrectState(true);
                 pressedCorrect = true;
-                console.log("oi")
+                // forceUpdate();
                 props.addCorrect();
             }
         }else if(lastNoteFound && lastNoteFound.end && Date.now() < lastNoteFound.spawnMoment + lastNoteFound.totalLifeTime!){
             if(props.color == "green") console.log("Ispressed")
             setPressedCorrectState(true);
             pressedCorrect = true;
-            console.log("oi")
             props.addCorrect();
+        }else if(lastNoteFound && lastNoteFound.end && Date.now() > lastNoteFound.spawnMoment + lastNoteFound.totalLifeTime!){
+            setPressedCorrectState(false);
+            setPressedState(false);
+        }else if(lastNoteFound && !lastNoteFound.end){
+            setPressedCorrectState(false);
+            setPressedState(false);
         }
     };
 
@@ -96,8 +100,9 @@ export const Trigger = React.memo((props: ITrigger) => {
             setPressedState(false);
         }
     }
+
+
     useEffect(()=>{
-        console.log("oi")
         document.removeEventListener("keydown", onKeyDown);
         document.removeEventListener("keyup", onKeyRelease);
         document.addEventListener("keydown", onKeyDown);
@@ -112,7 +117,7 @@ export const Trigger = React.memo((props: ITrigger) => {
             pressed={pressedState}
             pressedCorrect={pressedCorrectState}
         >
-            {true && <img src={Fire}/>}
+            <img className={!pressedCorrectState ? "notPressed":""} src={Fire}/>
         </StyledTrigger>
     );
-});
+};

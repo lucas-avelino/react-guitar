@@ -48,19 +48,19 @@ const StyledTrigger = styled.div<{
     }
 `
 
-export const Trigger = (props: ITrigger) => {
+export const Trigger = React.memo((props: ITrigger) => {
     const [pressedState , setPressedState] = useState(false);
     const [pressedCorrectState , setPressedCorrectState] = useState(false);
-    let pressed = false;
-    let pressedCorrect = false;
     let lastNoteFound: undefined | INoteModel;
     const commonTotalLifeTime = CONFIG.trilhaSize/CONFIG.noteVelocity;
+    // let pressed = false;
+    // let pressedCorrect = false;
 
     // if(props.color == "green") console.log(`[${Date.now()}][Log][OnRender][${props.color}]:`,"props.notas",props.notas)
-    const onKeyDown =  (e:any) => {
-        if(e.keyCode == props.keyCode && !pressed){
+    let onKeyDown =  (e:any) => {
+        if(e.keyCode == props.keyCode && !pressedState){
             setPressedState(true);
-            pressed = true;
+            // pressed = true;
             const filtered = props.notas.filter(n=>
                 n
                 && n.spawnMoment + commonTotalLifeTime < Date.now() + CONFIG.accuracy
@@ -73,34 +73,35 @@ export const Trigger = (props: ITrigger) => {
                 lastNoteFound =  props.notas[props.notas.indexOf(filtered[0])];
                 delete props.notas[props.notas.indexOf(filtered[0])];
                 setPressedCorrectState(true);
-                pressedCorrect = true;
+                // pressedCorrect = true;
                 // forceUpdate();
                 props.addCorrect();
             }
         }else if(lastNoteFound && lastNoteFound.end && Date.now() < lastNoteFound.spawnMoment + lastNoteFound.totalLifeTime!){
             if(props.color == "green") console.log("Ispressed")
             setPressedCorrectState(true);
-            pressedCorrect = true;
+            // pressedCorrect = true;
             props.addCorrect();
         }else if(lastNoteFound && lastNoteFound.end && Date.now() > lastNoteFound.spawnMoment + lastNoteFound.totalLifeTime!){
             setPressedCorrectState(false);
             setPressedState(false);
-        }else if(lastNoteFound && !lastNoteFound.end){
+        } 
+
+        if(lastNoteFound && !lastNoteFound.end && Date.now() > lastNoteFound.spawnMoment + 100 && pressedCorrectState){
+            console.log("aaa");
             setPressedCorrectState(false);
-            setPressedState(false);
         }
     };
 
     const onKeyRelease = function (e:any) {
-        console.log("release",e.keyCode )
+        console.log("release",e.keyCode)
 
         if(e.keyCode == props.keyCode){
-            pressedCorrect = pressed = false;
+            // pressedCorrect = pressed = false;
             setPressedCorrectState(false);
             setPressedState(false);
         }
     }
-
 
     useEffect(()=>{
         document.removeEventListener("keydown", onKeyDown);
@@ -108,7 +109,6 @@ export const Trigger = (props: ITrigger) => {
         document.addEventListener("keydown", onKeyDown);
         document.addEventListener("keyup", onKeyRelease);
     },[props.notas])
-
 
     // console.log(`[${Date.now()}][Render]: Trigger Redering`,props,pressed)
     return(
@@ -120,4 +120,4 @@ export const Trigger = (props: ITrigger) => {
             <img className={!pressedCorrectState ? "notPressed":""} src={Fire}/>
         </StyledTrigger>
     );
-};
+});
